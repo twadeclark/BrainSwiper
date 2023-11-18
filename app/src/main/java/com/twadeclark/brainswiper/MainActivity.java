@@ -15,8 +15,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void createNewDeck(View view) {
-//        Intent intent = new Intent(this, NewDeckActivity.class);
-        Intent intent = new Intent(this, DeckEditorFragment.class);
+        Intent intent = new Intent(MainActivity.this, DeckEditor.class);
         startActivity(intent);
     }
 
