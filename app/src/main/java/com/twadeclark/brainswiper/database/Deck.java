@@ -6,6 +6,11 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "decks")
 public class Deck {
+    public Deck(String deckName, String deckContents) {
+        this.deckName = deckName;
+        this.deckContents = deckContents;
+    }
+
     @PrimaryKey(autoGenerate = true)
     public int id;
     @ColumnInfo(name = "deckName")

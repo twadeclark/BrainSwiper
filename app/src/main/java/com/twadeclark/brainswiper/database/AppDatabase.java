@@ -18,7 +18,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     // Create database here
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                                    AppDatabase.class, "deck_database")
+                                    AppDatabase.class, "database-name")
                             .fallbackToDestructiveMigration()
                             .build();
                 }

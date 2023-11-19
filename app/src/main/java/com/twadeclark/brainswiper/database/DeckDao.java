@@ -12,10 +12,10 @@ import java.util.List;
 @Dao
 public interface DeckDao {
     @Query("SELECT * FROM decks")
-    List<Deck> getAll();
+    LiveData<List<Deck>> getAllDecks();
 
     @Insert
-    void insertAll(Deck... decks);
+    void insert(Deck deck);
 
     @Delete
     void delete(Deck deck);

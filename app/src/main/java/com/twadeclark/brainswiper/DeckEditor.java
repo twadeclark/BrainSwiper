@@ -1,5 +1,6 @@
 package com.twadeclark.brainswiper;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -7,9 +8,11 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 
 import androidx.core.view.WindowCompat;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -27,6 +30,8 @@ import com.twadeclark.brainswiper.database.DeckDao;
 import com.twadeclark.brainswiper.database.AppDatabase;
 
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class DeckEditor extends AppCompatActivity {
 
@@ -43,41 +48,55 @@ public class DeckEditor extends AppCompatActivity {
     }
 
     public void onSaveClicked(View view) {
-        // TODO
-// Example in DeckEditor.java
 
-// Step 1: Create an instance of the Room Database
         AppDatabase db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "database-name").build();
 
-// Step 2: Access the DAO
         DeckDao deckDao = db.deckDao();
 
-// Step 3: Create a Deck object
-        Deck newDeck = new Deck();
-//        newDeck.setDeckName("My New Deck");
-//        newDeck.setDeckContents("Contents of the new deck");
-
-        String n = String.valueOf(this.binding.editTextTextDeckName.getText()).trim();
-        String m = String.valueOf(this.binding.editTextTextMultiLine.getText());
+        String deckName = String.valueOf(this.binding.editTextTextDeckName.getText()).trim();
+        String deckContents = String.valueOf(this.binding.editTextTextMultiLine.getText());
+        Deck newDeck = new Deck(deckName, deckContents);
 
 
-        if (!n.isEmpty()) {
-            newDeck.setDeckName(n);
-            newDeck.setDeckContents(m);
+//        new InsertDeckAsyncTask(deckDao).execute(newDeck);
+        insertDeck(deckDao, newDeck);
 
-
-// Step 4: Execute InsertDeckAsyncTask
-//        new DeckDao.InsertDeckAsyncTask(deckDao).execute(newDeck);
-
-            deckDao.insertAll(newDeck);
-
-            finish();
-        } else {
-            // TODO alert empty name not saved!
-        }
+        finish();
 
     }
+
+    public static void insertDeck(final DeckDao deckDao, final Deck deck) {
+        IO_EXECUTOR.execute(new Runnable() {
+            @Override
+            public void run() {
+                deckDao.insert(deck);
+
+//                Log.d("DeckEditor", "+ IO_EXECUTOR insertDeck: " + deck.deckName);
+//                LiveData<List<Deck>> deckTemp = deckDao.getAllDecks();
+//                Log.d("DeckEditor", "+ deckTemp.toString(): " + deckTemp.toString());
+
+
+            }
+        });
+    }
+
+    private static final Executor IO_EXECUTOR = Executors.newSingleThreadExecutor();
+
+    private static class InsertDeckAsyncTask extends AsyncTask<Deck, Void, Void> {
+        private DeckDao asyncTaskDao;
+
+        InsertDeckAsyncTask(DeckDao dao) {
+            asyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final Deck... params) {
+            asyncTaskDao.insert(params[0]);
+            return null;
+        }
+    }
+
 
     public void onCancelClicked(View view) {
         finish();

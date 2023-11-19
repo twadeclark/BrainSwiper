@@ -12,6 +12,7 @@ import androidx.room.Room;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private DeckViewModel mDeckViewModel;
+    private MyAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,25 +49,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadDeckNames() {
-        // Get a new or existing ViewModel from the ViewModelProvider
-        mDeckViewModel = new ViewModelProvider(this).get(DeckViewModel.class);
-
-        MyAdapter myAdapter = new MyAdapter(new ArrayList<>());
-
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(myAdapter);
+        mAdapter = new MyAdapter();
+        recyclerView.setAdapter(mAdapter);
 
-        mDeckViewModel.getAllDecks().observe(this, new Observer<List<String>>() {
+        // Set up the ViewModel
+        mDeckViewModel = new ViewModelProvider(this).get(DeckViewModel.class);
+        Log.d("MainActivity", "+ mDeckViewModel.toString(): " + mDeckViewModel.toString());
+
+        // Add an observer on the LiveData returned by getAllDecks.
+        // The onChanged() method fires when the observed data changes and the activity is
+        // in the foreground.
+        mDeckViewModel.getAllDecks().observe(this, new Observer<List<Deck>>() {
             @Override
-            public void onChanged(List<String> deckNames) {
-//                List<String> deckNames = new ArrayList<>();
-//                for (Deck deck : decks) {
-//                    deckNames.add(deck.getDeckName());
-//                }
-                myAdapter.setDeckNames(deckNames);
+            public void onChanged(@Nullable final List<Deck> decks) {
+                // Update the cached copy of the decks in the adapter.
+                mAdapter.setDecks(decks);
+                Log.d("MainActivity", "+ decks.toString(): " + decks.toString());
+                Log.d("MainActivity", "+ decks.size(): " + decks.size());
+
             }
         });
+
+
+
+
 
     }
 

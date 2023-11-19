@@ -10,16 +10,16 @@ import java.util.List;
 public class DeckViewModel extends AndroidViewModel {
 
     private DeckRepository mRepository;
-    private LiveData<List<String>> mAllDecks;
+//    private LiveData<List<Deck>> mAllDecks;
 
     public DeckViewModel(Application application) {
         super(application);
         mRepository = new DeckRepository(application);
-        mAllDecks = mRepository.getAllDeckNames();
+//        mAllDecks = mRepository.getAllDecks();
     }
 
-    public LiveData<List<String>> getAllDecks() {
-        return mAllDecks;
+    public LiveData<List<Deck>> getAllDecks() {
+        return mRepository.getAllDecks();
     }
 
     // Other ViewModel methods...
