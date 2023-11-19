@@ -16,7 +16,6 @@ import java.util.List;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.DeckViewHolder> {
     private List<Deck> decks;
 
-
     public void setDecks(List<Deck> decks) {
         this.decks = decks;
         notifyDataSetChanged();
@@ -31,19 +30,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.DeckViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull DeckViewHolder holder, int position) {
-//        String deckName = decks.get(position).deckName;
-//        holder.textView.setText(deckName);
         Deck currentDeck = decks.get(position);
         holder.textViewDeckName.setText(currentDeck.getDeckName());
-
     }
 
     @Override
     public int getItemCount() {
         int retVal = decks == null  ? 0 : decks.size();
-
-        Log.d("MyAdapter", "+ retVal: " + retVal);
-
         return retVal;
     }
 

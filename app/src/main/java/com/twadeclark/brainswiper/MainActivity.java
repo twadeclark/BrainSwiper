@@ -54,28 +54,15 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new MyAdapter();
         recyclerView.setAdapter(mAdapter);
 
-        // Set up the ViewModel
         mDeckViewModel = new ViewModelProvider(this).get(DeckViewModel.class);
-        Log.d("MainActivity", "+ mDeckViewModel.toString(): " + mDeckViewModel.toString());
+//        Log.d("MainActivity", "+ mDeckViewModel.toString(): " + mDeckViewModel.toString());
 
-        // Add an observer on the LiveData returned by getAllDecks.
-        // The onChanged() method fires when the observed data changes and the activity is
-        // in the foreground.
         mDeckViewModel.getAllDecks().observe(this, new Observer<List<Deck>>() {
             @Override
             public void onChanged(@Nullable final List<Deck> decks) {
-                // Update the cached copy of the decks in the adapter.
                 mAdapter.setDecks(decks);
-                Log.d("MainActivity", "+ decks.toString(): " + decks.toString());
-                Log.d("MainActivity", "+ decks.size(): " + decks.size());
-
             }
         });
-
-
-
-
-
     }
 
 }

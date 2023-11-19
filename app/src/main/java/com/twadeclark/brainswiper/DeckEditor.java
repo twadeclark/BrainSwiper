@@ -36,6 +36,8 @@ import java.util.concurrent.Executors;
 public class DeckEditor extends AppCompatActivity {
 
     private ActivityDeckEditorBinding binding;
+    private static final Executor IO_EXECUTOR = Executors.newSingleThreadExecutor();
+    private DeckViewModel deckViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,65 +46,49 @@ public class DeckEditor extends AppCompatActivity {
         binding = ActivityDeckEditorBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        deckViewModel = new ViewModelProvider(this).get(DeckViewModel.class);
+
         initUI();
     }
 
     public void onSaveClicked(View view) {
+        String deckName = binding.editTextTextDeckName.getText().toString().trim();
+        String deckContents = binding.editTextTextMultiLine.getText().toString();
 
-        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "database-name").build();
-
-        DeckDao deckDao = db.deckDao();
-
-        String deckName = String.valueOf(this.binding.editTextTextDeckName.getText()).trim();
-        String deckContents = String.valueOf(this.binding.editTextTextMultiLine.getText());
-        Deck newDeck = new Deck(deckName, deckContents);
-
-
-//        new InsertDeckAsyncTask(deckDao).execute(newDeck);
-        insertDeck(deckDao, newDeck);
+        if (!deckName.isEmpty()) {
+            Deck newDeck = new Deck(deckName, deckContents);
+            deckViewModel.insertDeck(newDeck);
+        }
 
         finish();
-
     }
-
-    public static void insertDeck(final DeckDao deckDao, final Deck deck) {
-        IO_EXECUTOR.execute(new Runnable() {
-            @Override
-            public void run() {
-                deckDao.insert(deck);
-
-//                Log.d("DeckEditor", "+ IO_EXECUTOR insertDeck: " + deck.deckName);
-//                LiveData<List<Deck>> deckTemp = deckDao.getAllDecks();
-//                Log.d("DeckEditor", "+ deckTemp.toString(): " + deckTemp.toString());
-
-
-            }
-        });
-    }
-
-    private static final Executor IO_EXECUTOR = Executors.newSingleThreadExecutor();
-
-    private static class InsertDeckAsyncTask extends AsyncTask<Deck, Void, Void> {
-        private DeckDao asyncTaskDao;
-
-        InsertDeckAsyncTask(DeckDao dao) {
-            asyncTaskDao = dao;
-        }
-
-        @Override
-        protected Void doInBackground(final Deck... params) {
-            asyncTaskDao.insert(params[0]);
-            return null;
-        }
-    }
-
+//
+//    public static void insertDeck(final DeckDao deckDao, final Deck deck) {
+//        IO_EXECUTOR.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                deckDao.insert(deck);
+//            }
+//        });
+//    }
+//
+//    private static class InsertDeckAsyncTask extends AsyncTask<Deck, Void, Void> {
+//        private DeckDao asyncTaskDao;
+//
+//        InsertDeckAsyncTask(DeckDao dao) {
+//            asyncTaskDao = dao;
+//        }
+//
+//        @Override
+//        protected Void doInBackground(final Deck... params) {
+//            asyncTaskDao.insert(params[0]);
+//            return null;
+//        }
+//    }
 
     public void onCancelClicked(View view) {
         finish();
     }
-
-
 
     private void initUI() {
 
