@@ -2,36 +2,27 @@ package com.twadeclark.brainswiper;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 
 import com.twadeclark.brainswiper.database.Deck;
-import com.twadeclark.brainswiper.database.DeckDao;
-import com.twadeclark.brainswiper.database.AppDatabase;
 import com.twadeclark.brainswiper.database.DeckViewModel;
-import com.twadeclark.brainswiper.database.MyAdapter;
-import com.twadeclark.brainswiper.databinding.ActivityDeckEditorBinding;
+import com.twadeclark.brainswiper.database.DeckAdapter;
 import com.twadeclark.brainswiper.databinding.ActivityMainBinding;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private DeckViewModel mDeckViewModel;
-    private MyAdapter mAdapter;
+    private DeckAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +32,16 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
 
         loadDeckNames();
+
+        mAdapter.setOnDeckLongClickListener(deck -> {
+            Intent intent = new Intent(MainActivity.this, DeckEditor.class);
+            intent.putExtra("deckId", deck.getId()); // Make sure your Deck class has an ID field
+            intent.putExtra("deckName", deck.getDeckName());
+            intent.putExtra("deckContents", deck.getDeckContents());
+            startActivity(intent);
+        });
     }
+
 
     public void createNewDeck(View view) {
         Intent intent = new Intent(MainActivity.this, DeckEditor.class);
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     public void loadDeckNames() {
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new MyAdapter();
+        mAdapter = new DeckAdapter();
         recyclerView.setAdapter(mAdapter);
 
         mDeckViewModel = new ViewModelProvider(this).get(DeckViewModel.class);

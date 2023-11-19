@@ -24,4 +24,8 @@ public class DeckViewModel extends AndroidViewModel {
         mRepository.insertDeck(deck);
     }
 
+    public void updateDeck(Deck deck) {
+        mRepository.updateDeck(deck);
+    }
+
 }

@@ -2,6 +2,7 @@ package com.twadeclark.brainswiper.database;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "decks")
@@ -9,6 +10,13 @@ public class Deck {
     public Deck(String deckName, String deckContents) {
         this.deckName = deckName;
         this.deckContents = deckContents;
+    }
+
+    @Ignore // so Room doesn't try to use this one
+    public Deck(String deckName, String deckContents, int id) {
+        this.deckName = deckName;
+        this.deckContents = deckContents;
+        this.id = id;
     }
 
     @PrimaryKey(autoGenerate = true)

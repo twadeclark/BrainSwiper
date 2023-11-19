@@ -38,6 +38,8 @@ public class DeckEditor extends AppCompatActivity {
     private ActivityDeckEditorBinding binding;
     private static final Executor IO_EXECUTOR = Executors.newSingleThreadExecutor();
     private DeckViewModel deckViewModel;
+    private int currentDeckId = -1; // Default to -1 to indicate no deck loaded
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class DeckEditor extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         deckViewModel = new ViewModelProvider(this).get(DeckViewModel.class);
+        currentDeckId = getIntent().getIntExtra("DECK_ID", -1);
 
         initUI();
     }
@@ -55,42 +58,31 @@ public class DeckEditor extends AppCompatActivity {
         String deckName = binding.editTextTextDeckName.getText().toString().trim();
         String deckContents = binding.editTextTextMultiLine.getText().toString();
 
-        if (!deckName.isEmpty()) {
+        if (currentDeckId == -1) { // new deck
             Deck newDeck = new Deck(deckName, deckContents);
             deckViewModel.insertDeck(newDeck);
+        } else {
+            Deck existingDeck = new Deck(deckName, deckContents, currentDeckId);
+            deckViewModel.updateDeck(existingDeck);
         }
 
         finish();
     }
-//
-//    public static void insertDeck(final DeckDao deckDao, final Deck deck) {
-//        IO_EXECUTOR.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                deckDao.insert(deck);
-//            }
-//        });
-//    }
-//
-//    private static class InsertDeckAsyncTask extends AsyncTask<Deck, Void, Void> {
-//        private DeckDao asyncTaskDao;
-//
-//        InsertDeckAsyncTask(DeckDao dao) {
-//            asyncTaskDao = dao;
-//        }
-//
-//        @Override
-//        protected Void doInBackground(final Deck... params) {
-//            asyncTaskDao.insert(params[0]);
-//            return null;
-//        }
-//    }
 
     public void onCancelClicked(View view) {
         finish();
     }
 
     private void initUI() {
+        if (getIntent().hasExtra("deckId")) {
+            // This means we are editing an existing deck
+            String deckName = getIntent().getStringExtra("deckName");
+            String deckContents = getIntent().getStringExtra("deckContents");
+
+            // Set these values in your EditTexts or other views
+            binding.editTextTextDeckName.setText(deckName);
+            binding.editTextTextMultiLine.setText(deckContents);
+        }
 
     }
 

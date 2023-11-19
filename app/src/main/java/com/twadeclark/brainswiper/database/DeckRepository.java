@@ -18,6 +18,14 @@ public class DeckRepository {
         deckDao = db.deckDao();
     }
 
+    public void updateDeck(Deck deck) {
+        IO_EXECUTOR.execute(() -> {
+            deckDao.update(deck);
+        Log.d("DeckRepository", "+ deck.id: " + deck.id);
+
+        });
+    }
+
     public void insertDeck(Deck deck) {
         IO_EXECUTOR.execute(() -> {
             deckDao.insert(deck);
@@ -28,9 +36,5 @@ public class DeckRepository {
         LiveData<List<Deck>> allDecks = deckDao.getAllDecks();
         return allDecks;
     }
-
-//    public void insertNewDeck(Deck deck) {
-//
-//    }
 
 }
