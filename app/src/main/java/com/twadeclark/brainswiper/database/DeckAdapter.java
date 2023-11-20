@@ -19,10 +19,20 @@ public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder
         void onDeckLongClick(Deck deck);
     }
 
+    public interface OnDeckClickListener {
+        void onDeckClick(Deck deck);
+    }
+
+
     private OnDeckLongClickListener longClickListener;
+    private OnDeckClickListener clickListener;
 
     public void setOnDeckLongClickListener(OnDeckLongClickListener listener) {
         this.longClickListener = listener;
+    }
+
+    public void setOnDeckClickListener(OnDeckClickListener listener) {
+        this.clickListener = listener;
     }
 
     public void setDecks(List<Deck> decks) {
@@ -34,8 +44,7 @@ public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder
     @Override
     public DeckViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.deck_item_layout, parent, false);
-//        return new DeckViewHolder(v);
-        return new DeckViewHolder(v, longClickListener);
+        return new DeckViewHolder(v, longClickListener, clickListener);
     }
 
     @Override
@@ -47,27 +56,12 @@ public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder
 
     @Override
     public int getItemCount() {
-        int retVal = decks == null  ? 0 : decks.size();
+        int retVal = decks == null ? 0 : decks.size();
         return retVal;
     }
 
     public static class DeckViewHolder extends RecyclerView.ViewHolder {
         final TextView textViewDeckName;
-
-//        public DeckViewHolder(View itemView, OnDeckLongClickListener longClickListener) {
-//            super(itemView);
-//            // Initialize other views...
-//
-//            itemView.setOnLongClickListener(v -> {
-//                if (longClickListener != null) {
-//                    int position = getAdapterPosition();
-//                    if (position != RecyclerView.NO_POSITION) {
-//                        longClickListener.onDeckLongClick(/* Get your Deck object here */);
-//                        return true;
-//                    }
-//                }
-//                return false;
-//            });
 
         private Deck currentDeck;
 
@@ -76,7 +70,7 @@ public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder
             // Set other views based on the deck information
         }
 
-        public DeckViewHolder(View itemView, OnDeckLongClickListener longClickListener) {
+        public DeckViewHolder(View itemView, OnDeckLongClickListener longClickListener, OnDeckClickListener clickListener) {
             super(itemView);
             textViewDeckName = itemView.findViewById(R.id.deck_name);
 
@@ -89,6 +83,17 @@ public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder
                     }
                 }
                 return false;
+            });
+
+            itemView.setOnClickListener(v -> {
+                if (clickListener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        clickListener.onDeckClick(currentDeck);
+//                        return true;
+                    }
+                }
+//                return false;
             });
         }
     }

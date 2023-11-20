@@ -18,11 +18,15 @@ public class DeckRepository {
         deckDao = db.deckDao();
     }
 
+    public void deleteDeck(Deck deck) {
+        IO_EXECUTOR.execute(() -> {
+            deckDao.delete(deck);
+        });
+    }
+
     public void updateDeck(Deck deck) {
         IO_EXECUTOR.execute(() -> {
             deckDao.update(deck);
-        Log.d("DeckRepository", "+ deck.id: " + deck.id);
-
         });
     }
 

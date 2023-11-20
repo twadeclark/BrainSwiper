@@ -40,8 +40,15 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("deckContents", deck.getDeckContents());
             startActivity(intent);
         });
-    }
 
+        mAdapter.setOnDeckClickListener(deck -> {
+            Intent intent = new Intent(MainActivity.this, FlashcardActivity.class);
+            intent.putExtra("deckId", deck.getId()); // Make sure your Deck class has an ID field
+            intent.putExtra("deckName", deck.getDeckName());
+            intent.putExtra("deckContents", deck.getDeckContents());
+            startActivity(intent);
+        });
+    }
 
     public void createNewDeck(View view) {
         Intent intent = new Intent(MainActivity.this, DeckEditor.class);

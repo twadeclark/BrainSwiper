@@ -29,6 +29,9 @@ import com.twadeclark.brainswiper.databinding.ActivityDeckEditorBinding;
 import com.twadeclark.brainswiper.database.DeckDao;
 import com.twadeclark.brainswiper.database.AppDatabase;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -49,21 +52,35 @@ public class DeckEditor extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         deckViewModel = new ViewModelProvider(this).get(DeckViewModel.class);
-        currentDeckId = getIntent().getIntExtra("DECK_ID", -1);
+        currentDeckId = getIntent().getIntExtra("deckId", -1);
 
         initUI();
     }
 
     public void onSaveClicked(View view) {
         String deckName = binding.editTextTextDeckName.getText().toString().trim();
-        String deckContents = binding.editTextTextMultiLine.getText().toString();
+        String deckContents = binding.editTextTextMultiLine.getText().toString().trim();
+
+        if (deckName.isEmpty() ) {
+            Date d = new Date();
+            deckName = "Created " + d.toString();
+        }
 
         if (currentDeckId == -1) { // new deck
-            Deck newDeck = new Deck(deckName, deckContents);
-            deckViewModel.insertDeck(newDeck);
-        } else {
+            if (deckContents.isEmpty() ) {
+                // forget it and close
+            } else {
+                Deck newDeck = new Deck(deckName, deckContents);
+                deckViewModel.insertDeck(newDeck);
+            }
+        } else { // existing deck
             Deck existingDeck = new Deck(deckName, deckContents, currentDeckId);
-            deckViewModel.updateDeck(existingDeck);
+
+            if (deckContents.isEmpty()) {
+                deckViewModel.deleteDeck(existingDeck);
+            } else {
+                deckViewModel.updateDeck(existingDeck);
+            }
         }
 
         finish();

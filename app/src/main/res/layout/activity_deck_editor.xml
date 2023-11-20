@@ -26,8 +26,7 @@
                 android:id="@+id/editTextTextDeckName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:text="put the deck name here" />
+                android:inputType="textPersonName" />
 
             <EditText
                 android:id="@+id/editTextTextMultiLine"
