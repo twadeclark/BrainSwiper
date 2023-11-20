@@ -2,6 +2,7 @@ package com.twadeclark.brainswiper;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 
@@ -12,6 +13,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.twadeclark.brainswiper.database.Flashcard;
 import com.twadeclark.brainswiper.databinding.ActivityFlashcardBinding;
@@ -25,6 +27,7 @@ public class FlashcardActivity extends AppCompatActivity {
     private int currentCardIndex = 0;
     private boolean isFrontOfCardShown = true;
     private @NonNull ActivityFlashcardBinding binding;
+    private GestureDetector gestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,85 @@ public class FlashcardActivity extends AppCompatActivity {
         setupGestureDetector();
         loadFlashCards();
         showCurrentFlashcardFront();
+    }
+
+
+    private void setupGestureDetector() {
+        gestureDetector = new GestureDetector(this, new GestureListener());
+
+//        TextView textView = binding.flashcardTextView;
+        ConstraintLayout constraintLayoutFlashcard = binding.constraintLayoutFlashcard;
+
+        constraintLayoutFlashcard.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                Log.d("FlashcardActivity", "+ onTouch v.toString(): " + v.toString());
+                Log.d("FlashcardActivity", "+ onTouch event.toString(): " + event.toString());
+
+
+                boolean retVal = gestureDetector.onTouchEvent(event);
+                Log.d("FlashcardActivity", "+ onTouch retVal: " + retVal);
+                binding.titleTextView.setText("retVal:" + retVal);
+
+//                return retVal;
+                return true;
+            }
+        });
+    }
+
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+        private static final int SWIPE_THRESHOLD = 100;
+        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            float diffY = e2.getY() - e1.getY();
+            float diffX = e2.getX() - e1.getX();
+
+
+            Log.d("FlashcardActivity", "+ onFling diffY: " + diffY);
+            Log.d("FlashcardActivity", "+ onFling diffX: " + diffX);
+            binding.titleTextView.setText("diffX:" + diffX + " diffY:" + diffY);
+
+
+
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (diffX > 0) {
+                        onSwipeRight();
+                    } else {
+                        onSwipeLeft();
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void onSwipeRight() {
+            // Handle right swipe
+//            currentCardIndex++;
+//            showCurrentFlashcardBack();
+
+            Log.d("FlashcardActivity", "+ onSwipeRight ");
+
+            handleSwipe(0,0);
+
+        }
+
+        public void onSwipeLeft() {
+            // Handle left swipe
+//            currentCardIndex++;
+//            showCurrentFlashcardFront();
+
+
+            Log.d("FlashcardActivity", "+ onSwipeLeft ");
+
+            handleSwipe(0,0);
+
+
+        }
     }
 
     private void loadFlashCards() {
@@ -78,26 +160,15 @@ public class FlashcardActivity extends AppCompatActivity {
         binding.flashcardTextView.setText(flashcardList.get(currentCardIndex).getBack());
     }
 
-    private void setupGestureDetector() {
-        GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                // Determine swipe direction and toggle card or move to next card
-                handleSwipe(velocityX, velocityY);
-                return super.onFling(e1, e2, velocityX, velocityY);
-            }
-        });
-
-        // Attach the gesture detector to your view component
-    }
-
     private void handleSwipe(float velocityX, float velocityY) {
         if (isFrontOfCardShown) {
             // Show back of the card
+            isFrontOfCardShown = false;
             showCurrentFlashcardBack();
         } else {
             // Record the user's response based on swipe direction
             // Move to the next card
+            isFrontOfCardShown = true;
             currentCardIndex++;
             showCurrentFlashcardFront();
         }
