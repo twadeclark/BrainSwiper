@@ -11,6 +11,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -35,6 +36,7 @@ public class FlashcardActivity extends AppCompatActivity {
     private GestureDetector gestureDetector;
     private float flipDelay = 100.0f;
     private float prevVel = -1.0f;
+    private int deckLength = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,7 @@ public class FlashcardActivity extends AppCompatActivity {
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             float diffY = e2.getY() - e1.getY();
             float diffX = e2.getX() - e1.getX();
+            int delay = (int) (200 - Math.sqrt(Math.abs(velocityY)) );
 
             if (Math.abs(diffX) > Math.abs(diffY)) { // horizontal swipe
                 if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) { // fast enough swipe
@@ -77,11 +80,13 @@ public class FlashcardActivity extends AppCompatActivity {
                     } else {
                         if (diffX > 0) { // swipe right
                             // we are all good
+                            tossCardRight( delay);
                         } else { // swipe left
                             // got it wrong, add it to the end
                             Flashcard f;
                             f = new Flashcard(flashcardList.get(currentCardIndex).getFront(),flashcardList.get(currentCardIndex).getBack());
                             flashcardList.add(f);
+                            tossCardLeft(delay);
                         }
 
                         currentCardIndex++;
@@ -101,8 +106,7 @@ public class FlashcardActivity extends AppCompatActivity {
                 if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) { // fast enough swipe
                     if (diffY < 0) { // swipe up
                         if (isFrontOfCardShown) {
-                            double delay = (200 - Math.sqrt(Math.abs(velocityY)) );
-                            flipCardOver ((int)delay);
+                            flipCardOver (delay);
                         }
                     }
                 }
@@ -111,6 +115,63 @@ public class FlashcardActivity extends AppCompatActivity {
             return true;
         }
     }
+
+    private void tossCardLeft (int delay) {
+        View cardView = binding.constraintLayoutFlipper;
+        float screenWidth = binding.constraintLayoutFlipper.getWidth();
+
+        cardView.animate()
+                .translationX(-screenWidth)
+                .setDuration(delay)
+                .setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        cardView.setTranslationX(0); // Reset position after animation
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+                    }
+                })
+                .start();
+    }
+
+    private void tossCardRight (int delay) {
+        View cardView = binding.constraintLayoutFlipper;
+        float screenWidth = binding.constraintLayoutFlipper.getWidth();
+
+        cardView.animate()
+                .translationX(screenWidth)
+                .setDuration(delay)
+                .setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        cardView.setTranslationX(0); // Reset position after animation
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+                    }
+                })
+                .start();
+    }
+
 
     private void flipCardOver (int delay) {
         // delay = bigger is slower
@@ -123,9 +184,7 @@ public class FlashcardActivity extends AppCompatActivity {
         firstHalf.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                // Change the content of the card to show the other side
                 showCurrentFlashcardBack();
-
             }
         });
 
@@ -133,17 +192,22 @@ public class FlashcardActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 binding.constraintLayoutFlashcard.setRotationX(0);
-
             }
         });
 
         AnimatorSet cardFlip = new AnimatorSet();
         cardFlip.playSequentially(firstHalf, secondHalf);
         cardFlip.start();
-
     }
 
     private void showCurrentFlashcardFront() {
+        if (currentCardIndex >= deckLength) {
+            binding.constraintLayoutFlipper.setBackgroundColor(Color.parseColor("#FACADE"));
+        } else {
+            binding.constraintLayoutFlipper.setBackgroundColor(Color.parseColor("#DEFACE"));
+
+        }
+
         isFrontOfCardShown = true;
         String s = flashcardList.get(currentCardIndex).getFront();
         binding.flashcardTextView.setText(s);
@@ -180,6 +244,7 @@ public class FlashcardActivity extends AppCompatActivity {
             flashcardList.add(f);
         }
 
+        deckLength = flashcardList.size();
         Collections.shuffle(flashcardList);
     }
 
