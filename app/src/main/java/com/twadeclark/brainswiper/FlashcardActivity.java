@@ -6,6 +6,10 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +33,8 @@ public class FlashcardActivity extends AppCompatActivity {
     private boolean isFrontOfCardShown = true;
     private @NonNull ActivityFlashcardBinding binding;
     private GestureDetector gestureDetector;
+    private float flipDelay = 100.0f;
+    private float prevVel = -1.0f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +101,8 @@ public class FlashcardActivity extends AppCompatActivity {
                 if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) { // fast enough swipe
                     if (diffY < 0) { // swipe up
                         if (isFrontOfCardShown) {
-                            showCurrentFlashcardBack();
+                            double delay = (200 - Math.sqrt(Math.abs(velocityY)) );
+                            flipCardOver ((int)delay);
                         }
                     }
                 }
@@ -103,6 +110,37 @@ public class FlashcardActivity extends AppCompatActivity {
 
             return true;
         }
+    }
+
+    private void flipCardOver (int delay) {
+        // delay = bigger is slower
+        ObjectAnimator firstHalf = ObjectAnimator.ofFloat(binding.constraintLayoutFlipper, "rotationX", 0f, 90f);
+        firstHalf.setDuration(delay); // duration in milliseconds
+
+        ObjectAnimator secondHalf = ObjectAnimator.ofFloat(binding.constraintLayoutFlipper, "rotationX", 90f, 180f);
+        secondHalf.setDuration(delay);
+
+        firstHalf.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // Change the content of the card to show the other side
+                showCurrentFlashcardBack();
+
+            }
+        });
+
+        secondHalf.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                binding.constraintLayoutFlashcard.setRotationX(0);
+
+            }
+        });
+
+        AnimatorSet cardFlip = new AnimatorSet();
+        cardFlip.playSequentially(firstHalf, secondHalf);
+        cardFlip.start();
+
     }
 
     private void showCurrentFlashcardFront() {
