@@ -179,7 +179,7 @@ public class FlashcardActivity extends AppCompatActivity {
         ObjectAnimator firstHalf = ObjectAnimator.ofFloat(binding.constraintLayoutFlipper, "rotationX", 0f, 90f);
         firstHalf.setDuration(delay); // duration in milliseconds
 
-        ObjectAnimator secondHalf = ObjectAnimator.ofFloat(binding.constraintLayoutFlipper, "rotationX", 90f, 180f);
+        ObjectAnimator secondHalf = ObjectAnimator.ofFloat(binding.constraintLayoutFlipper, "rotationX", 270f, 360f);
         secondHalf.setDuration(delay);
 
         firstHalf.addListener(new AnimatorListenerAdapter() {
@@ -192,7 +192,7 @@ public class FlashcardActivity extends AppCompatActivity {
         secondHalf.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                binding.constraintLayoutFlashcard.setRotationX(0);
+                binding.constraintLayoutFlipper.setRotationX(0);
             }
         });
 
