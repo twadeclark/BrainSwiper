@@ -17,10 +17,5 @@
     <style name="Base.Theme.BrainSwiper" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
-        <!-- Card tones -->
-        <item name="cardFrontBackgroundColor">@color/colorCardFrontDark</item>
-        <item name="cardBackBackgroundColor">@color/colorCardBackDark</item>
-        <item name="cardChooserColor">@color/colorCardChooserDark</item>
-
     </style>
 </resources>

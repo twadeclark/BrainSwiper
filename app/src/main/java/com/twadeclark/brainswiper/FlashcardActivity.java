@@ -3,6 +3,7 @@ package com.twadeclark.brainswiper;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 
@@ -201,11 +202,12 @@ public class FlashcardActivity extends AppCompatActivity {
     }
 
     private void showCurrentFlashcardFront() {
-        binding.constraintLayoutInterior.setBackgroundColor(Color.parseColor("#EEEEEE"));
+        binding.constraintLayoutInterior.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardFront)));
+        binding.flashcardTextView.setTextColor((ContextCompat.getColor(this, R.color.colorCardFrontText)));
         if (currentCardIndex >= deckLength) {
-            binding.constraintLayoutFlipper.setBackgroundColor(Color.parseColor("#FACADE"));
+            binding.constraintLayoutFlipper.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardRed)));
         } else {
-            binding.constraintLayoutFlipper.setBackgroundColor(Color.parseColor("#DEFACE"));
+            binding.constraintLayoutFlipper.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardGreen)));
         }
 
         isFrontOfCardShown = true;
@@ -216,7 +218,8 @@ public class FlashcardActivity extends AppCompatActivity {
     }
 
     private void showCurrentFlashcardBack() {
-        binding.constraintLayoutInterior.setBackgroundColor(Color.parseColor("#DDDDDD"));
+        binding.constraintLayoutInterior.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardBack)));
+        binding.flashcardTextView.setTextColor((ContextCompat.getColor(this, R.color.colorCardBackText)));
         isFrontOfCardShown = false;
         String s = flashcardList.get(currentCardIndex).getBack();
         binding.flashcardTextView.setText(s);

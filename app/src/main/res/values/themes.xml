@@ -18,8 +18,8 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <!-- Card tones -->
-        <item name="cardFrontBackgroundColor">@color/colorCardFrontLight</item>
-        <item name="cardBackBackgroundColor">@color/colorCardBackLight</item>
+        <item name="cardFrontBackgroundColor">@color/colorCardFront</item>
+        <item name="cardBackBackgroundColor">@color/colorCardBack</item>
         <item name="cardChooserColor">@color/colorCardChooserLight</item>
 
     </style>

@@ -25,13 +25,14 @@
     <color name="dark_green_700">#2A5A29</color> <!-- A darker, subdued green for the secondary variant -->
 
     <!-- Card tones -->
-    <color name="colorCardFrontDark">#534D48</color>
-    <color name="colorCardBackDark">#33302D</color>
-    <color name="colorCardFrontLight">#E1CFC1</color>
-    <color name="colorCardBackLight">#B6A89D</color>
+
+    <color name="colorCardBack">#444444</color>
+    <color name="colorCardFront">#BBBBBB</color>
+    <color name="colorCardBackText">#EEEEEE</color>
+    <color name="colorCardFrontText">#111111</color>
+
+    <color name="colorCardChooserLight">#DDDDDD</color>
     <color name="colorCardGreen">#07500B</color>
     <color name="colorCardRed">#500707</color>
-    <color name="colorCardChooserDark">#333333</color>
-    <color name="colorCardChooserLight">#DDDDDD</color>
 
 </resources>

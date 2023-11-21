@@ -41,7 +41,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:background="@color/colorCardFrontDark"
+            android:background="@color/colorCardBack"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -75,6 +75,7 @@
 
             android:text="this is flashcard"
             android:textAlignment="center"
+            android:textColor="@color/colorCardBackText"
             android:textSize="48sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -87,6 +88,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Q:"
+            android:textColor="@color/colorCardBackText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -96,6 +98,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="xx/xxx"
+            android:textColor="@color/colorCardBackText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
