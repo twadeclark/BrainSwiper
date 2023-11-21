@@ -201,20 +201,22 @@ public class FlashcardActivity extends AppCompatActivity {
     }
 
     private void showCurrentFlashcardFront() {
+        binding.constraintLayoutInterior.setBackgroundColor(Color.parseColor("#EEEEEE"));
         if (currentCardIndex >= deckLength) {
             binding.constraintLayoutFlipper.setBackgroundColor(Color.parseColor("#FACADE"));
         } else {
             binding.constraintLayoutFlipper.setBackgroundColor(Color.parseColor("#DEFACE"));
-
         }
 
         isFrontOfCardShown = true;
         String s = flashcardList.get(currentCardIndex).getFront();
         binding.flashcardTextView.setText(s);
         binding.statusQA.setText("Q:");
+        binding.countDisplay.setText("" + (currentCardIndex + 1) + "/" + flashcardList.size());
     }
 
     private void showCurrentFlashcardBack() {
+        binding.constraintLayoutInterior.setBackgroundColor(Color.parseColor("#DDDDDD"));
         isFrontOfCardShown = false;
         String s = flashcardList.get(currentCardIndex).getBack();
         binding.flashcardTextView.setText(s);
