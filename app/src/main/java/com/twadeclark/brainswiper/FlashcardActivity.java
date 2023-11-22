@@ -245,25 +245,42 @@ public class FlashcardActivity extends AppCompatActivity {
     private void showCurrentFlashcardFront() {
         binding.constraintLayoutInterior.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardFront)));
         binding.flashcardTextView.setTextColor((ContextCompat.getColor(this, R.color.colorCardFrontText)));
+        isFrontOfCardShown = true;
+
         if (currentCardIndex >= deckLength) {
             binding.constraintLayoutFlipper.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardRed)));
         } else {
             binding.constraintLayoutFlipper.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardGreen)));
         }
 
-        isFrontOfCardShown = true;
-        String s = flashcardList.get(currentCardIndex).getFront();
-        binding.flashcardTextView.setText(s);
         binding.statusQA.setText("Q:");
-        binding.countDisplay.setText("" + (currentCardIndex + 1) + "/" + flashcardList.size());
+        String countDisplayText = "" + (currentCardIndex + 1) + "/" + flashcardList.size();
+        binding.countDisplay.setText(countDisplayText);
+
+        //
+        binding.flashcardTextView.setText(cardFrontReversedIfNeeded());
+    }
+
+    private String cardFrontReversedIfNeeded() {
+        return binding.checkBoxReverse.isChecked() ? flashcardList.get(currentCardIndex).getBack() : flashcardList.get(currentCardIndex).getFront();
+    }
+
+    private String cardBackReversedIfNeeded() {
+        return binding.checkBoxReverse.isChecked() ? flashcardList.get(currentCardIndex).getFront() : flashcardList.get(currentCardIndex).getBack();
     }
 
     private void showCurrentFlashcardBack() {
         binding.constraintLayoutInterior.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardBack)));
         binding.flashcardTextView.setTextColor((ContextCompat.getColor(this, R.color.colorCardBackText)));
         isFrontOfCardShown = false;
-        binding.flashcardTextView.setText(flashcardList.get(currentCardIndex).getBack());
-        binding.statusQA.setText("Q: "+ flashcardList.get(currentCardIndex).getFront() + "\n" + "A:");
+
+        //
+//        String cardFront = binding.checkBoxReverse.isChecked() ? flashcardList.get(currentCardIndex).getBack() : flashcardList.get(currentCardIndex).getFront();
+//        String cardBack = binding.checkBoxReverse.isChecked() ? flashcardList.get(currentCardIndex).getFront() : flashcardList.get(currentCardIndex).getBack();
+
+        String statusQAText = "Q: " + cardFrontReversedIfNeeded() + "\n" + "A:";
+        binding.statusQA.setText(statusQAText);
+        binding.flashcardTextView.setText(cardBackReversedIfNeeded());
 
     }
 
