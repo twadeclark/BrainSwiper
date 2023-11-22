@@ -14,6 +14,9 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -48,13 +51,38 @@ public class FlashcardActivity extends AppCompatActivity {
         setupGestureDetector();
         loadFlashCards();
         showCurrentFlashcardFront();
+        setupClickableDeckName();
+    }
+
+    private void setupClickableDeckName() {
+        TextView tvDeckName = findViewById(R.id.titleTextView);
+        String deckName = "Deck Name";
+        SpannableString content = new SpannableString(deckName);
+        content.setSpan(new UnderlineSpan(), 0, deckName.length(), 0);
+        tvDeckName.setText(content);
+
+        tvDeckName.setClickable(true);
+        tvDeckName.setFocusable(true);
+
+        tvDeckName.setOnClickListener(v -> {
+            Intent intent = new Intent(FlashcardActivity.this, DeckEditor.class);
+
+            String deckIdIntent = getIntent().getStringExtra("deckId");
+            String deckNameIntent = getIntent().getStringExtra("deckName");
+            String deckContentsIntent = getIntent().getStringExtra("deckContents");
+
+            intent.putExtra("deckId", deckIdIntent);
+            intent.putExtra("deckName", deckNameIntent);
+            intent.putExtra("deckContents", deckContentsIntent);
+
+            startActivity(intent);
+        });
+
     }
 
     private void setupGestureDetector() {
         gestureDetector = new GestureDetector(this, new GestureListener());
-
         ConstraintLayout constraintLayoutFlashcard = binding.constraintLayoutFlashcard;
-
         constraintLayoutFlashcard.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -221,9 +249,8 @@ public class FlashcardActivity extends AppCompatActivity {
         binding.constraintLayoutInterior.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardBack)));
         binding.flashcardTextView.setTextColor((ContextCompat.getColor(this, R.color.colorCardBackText)));
         isFrontOfCardShown = false;
-        String s = flashcardList.get(currentCardIndex).getBack();
-        binding.flashcardTextView.setText(s);
-        binding.statusQA.setText("A:");
+        binding.flashcardTextView.setText(flashcardList.get(currentCardIndex).getBack());
+        binding.statusQA.setText("Q: "+ flashcardList.get(currentCardIndex).getFront() + "\n" + "A:");
     }
 
     private void loadFlashCards() {
