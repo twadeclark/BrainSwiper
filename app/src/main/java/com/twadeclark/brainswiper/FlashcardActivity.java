@@ -4,9 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.animation.Animator;
@@ -14,16 +11,12 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.twadeclark.brainswiper.database.Deck;
@@ -32,11 +25,13 @@ import com.twadeclark.brainswiper.database.Flashcard;
 import com.twadeclark.brainswiper.databinding.ActivityFlashcardBinding;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class FlashcardActivity extends AppCompatActivity {
 
+    private static final String blankCardText = "(blank)";
     private List<Flashcard> flashcardList = new ArrayList<>();
     private int currentCardIndex = 0;
     private boolean isFrontOfCardShown = true;
@@ -46,9 +41,9 @@ public class FlashcardActivity extends AppCompatActivity {
     private float prevVel = -1.0f;
     private int deckLength = 0;
 
-    private int deckIdIntent;
-    private String deckNameIntent;
-    private String deckContentsIntent;
+    private int deckIdFromIntent;
+    private String deckNameFromIntent;
+    private String deckContentsFromIntent;
     private DeckViewModel deckViewModel;
     private Deck thisDeck;
 
@@ -58,13 +53,13 @@ public class FlashcardActivity extends AppCompatActivity {
         binding = ActivityFlashcardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         deckViewModel = new ViewModelProvider(this).get(DeckViewModel.class);
-        deckIdIntent = getIntent().getIntExtra("deckId", -1);
+        deckIdFromIntent = getIntent().getIntExtra("deckId", -1);
 
-        deckViewModel.getDeckById(deckIdIntent).observe(this, deck -> {
+        deckViewModel.getDeckById(deckIdFromIntent).observe(this, deck -> {
             if (deck != null) {
                 thisDeck = deck;
-                deckNameIntent = thisDeck.deckName;
-                deckContentsIntent = thisDeck.deckContents;
+                deckNameFromIntent = thisDeck.deckName;
+                deckContentsFromIntent = thisDeck.deckContents;
 
                 setupGestureDetector();
                 loadFlashCards();
@@ -79,8 +74,8 @@ public class FlashcardActivity extends AppCompatActivity {
 
     private void setupClickableDeckName() {
         TextView tvDeckName = findViewById(R.id.titleTextView);
-        SpannableString content = new SpannableString(deckNameIntent);
-        content.setSpan(new UnderlineSpan(), 0, deckNameIntent.length(), 0);
+        SpannableString content = new SpannableString(deckNameFromIntent);
+        content.setSpan(new UnderlineSpan(), 0, deckNameFromIntent.length(), 0);
         tvDeckName.setText(content);
 
         tvDeckName.setClickable(true);
@@ -89,9 +84,9 @@ public class FlashcardActivity extends AppCompatActivity {
         tvDeckName.setOnClickListener(v -> {
             Intent intent = new Intent(FlashcardActivity.this, DeckEditor.class);
 
-            intent.putExtra("deckId", deckIdIntent);
-            intent.putExtra("deckName", deckNameIntent);
-            intent.putExtra("deckContents", deckContentsIntent);
+            intent.putExtra("deckId", deckIdFromIntent);
+            intent.putExtra("deckName", deckNameFromIntent);
+            intent.putExtra("deckContents", deckContentsFromIntent);
 
             startActivity(intent);
         });
@@ -269,31 +264,28 @@ public class FlashcardActivity extends AppCompatActivity {
         isFrontOfCardShown = false;
         binding.flashcardTextView.setText(flashcardList.get(currentCardIndex).getBack());
         binding.statusQA.setText("Q: "+ flashcardList.get(currentCardIndex).getFront() + "\n" + "A:");
+
     }
 
     private void loadFlashCards() {
-        binding.titleTextView.setText(deckNameIntent);
+        binding.titleTextView.setText(deckNameFromIntent);
 
-        for (String line:deckContentsIntent.split("\n")) {
-            String[] parsed = line.split(",", 2);
-            Flashcard f;
+        for (String line: deckContentsFromIntent.split("\n")) {
+            String[] parsed = Arrays.stream(line.split(",", 2))
+                    .map(String::trim)
+                    .toArray(String[]::new);
 
-            String front = "(blank)";
-            String back = "(blank)";
+            String front = parsed[0].length() > 0 ? parsed[0] : blankCardText;
+            String back = parsed.length > 1 && parsed[1].length() > 0 ? parsed[1] : blankCardText;
 
-            if (parsed.length == 2) {
-                front = (parsed[0].trim().length() > 0) ? parsed[0].trim() : front;
-                back = (parsed[1].trim().length() > 0) ? parsed[1].trim() : back;
-                f = new Flashcard(front,back);
-            } else {
-                f = new Flashcard(line,back);
+            if (front != blankCardText || back != blankCardText)
+            {
+                flashcardList.add(new Flashcard(front, back));
             }
-
-            flashcardList.add(f);
         }
 
         if (flashcardList.isEmpty()) {
-            Flashcard f = new Flashcard("empty","deck");
+            Flashcard f = new Flashcard("(empty deck)","(empty deck)");
             flashcardList.add(f);
         }
 
