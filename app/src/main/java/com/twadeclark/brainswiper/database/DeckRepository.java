@@ -41,4 +41,9 @@ public class DeckRepository {
         return allDecks;
     }
 
+    public LiveData<Deck> getDeckById(int deckId) {
+        LiveData<Deck> oneDeck = deckDao.getDeckById(deckId);
+        return oneDeck;
+    }
+
 }

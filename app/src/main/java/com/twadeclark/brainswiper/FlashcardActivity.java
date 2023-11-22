@@ -6,6 +6,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -24,6 +26,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.twadeclark.brainswiper.database.Deck;
+import com.twadeclark.brainswiper.database.DeckViewModel;
 import com.twadeclark.brainswiper.database.Flashcard;
 import com.twadeclark.brainswiper.databinding.ActivityFlashcardBinding;
 
@@ -42,23 +46,41 @@ public class FlashcardActivity extends AppCompatActivity {
     private float prevVel = -1.0f;
     private int deckLength = 0;
 
+    private int deckIdIntent;
+    private String deckNameIntent;
+    private String deckContentsIntent;
+    private DeckViewModel deckViewModel;
+    private Deck thisDeck;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityFlashcardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        deckViewModel = new ViewModelProvider(this).get(DeckViewModel.class);
+        deckIdIntent = getIntent().getIntExtra("deckId", -1);
 
-        setupGestureDetector();
-        loadFlashCards();
-        showCurrentFlashcardFront();
-        setupClickableDeckName();
+        deckViewModel.getDeckById(deckIdIntent).observe(this, deck -> {
+            if (deck != null) {
+                thisDeck = deck;
+                deckNameIntent = thisDeck.deckName;
+                deckContentsIntent = thisDeck.deckContents;
+
+                setupGestureDetector();
+                loadFlashCards();
+                showCurrentFlashcardFront();
+                setupClickableDeckName();
+            } else {
+                finish();
+            }
+        });
+
     }
 
     private void setupClickableDeckName() {
         TextView tvDeckName = findViewById(R.id.titleTextView);
-        String deckName = "Deck Name";
-        SpannableString content = new SpannableString(deckName);
-        content.setSpan(new UnderlineSpan(), 0, deckName.length(), 0);
+        SpannableString content = new SpannableString(deckNameIntent);
+        content.setSpan(new UnderlineSpan(), 0, deckNameIntent.length(), 0);
         tvDeckName.setText(content);
 
         tvDeckName.setClickable(true);
@@ -66,10 +88,6 @@ public class FlashcardActivity extends AppCompatActivity {
 
         tvDeckName.setOnClickListener(v -> {
             Intent intent = new Intent(FlashcardActivity.this, DeckEditor.class);
-
-            String deckIdIntent = getIntent().getStringExtra("deckId");
-            String deckNameIntent = getIntent().getStringExtra("deckName");
-            String deckContentsIntent = getIntent().getStringExtra("deckContents");
 
             intent.putExtra("deckId", deckIdIntent);
             intent.putExtra("deckName", deckNameIntent);
@@ -254,18 +272,21 @@ public class FlashcardActivity extends AppCompatActivity {
     }
 
     private void loadFlashCards() {
-        String deckName = getIntent().getStringExtra("deckName");
-        binding.titleTextView.setText(deckName);
+        binding.titleTextView.setText(deckNameIntent);
 
-        String deckContents = getIntent().getStringExtra("deckContents");
-        for (String line:deckContents.split("\n")) {
+        for (String line:deckContentsIntent.split("\n")) {
             String[] parsed = line.split(",", 2);
             Flashcard f;
 
+            String front = "(blank)";
+            String back = "(blank)";
+
             if (parsed.length == 2) {
-                f = new Flashcard(parsed[0].trim(),parsed[1].trim());
+                front = (parsed[0].trim().length() > 0) ? parsed[0].trim() : front;
+                back = (parsed[1].trim().length() > 0) ? parsed[1].trim() : back;
+                f = new Flashcard(front,back);
             } else {
-                f = new Flashcard(line,"(blank)");
+                f = new Flashcard(line,back);
             }
 
             flashcardList.add(f);

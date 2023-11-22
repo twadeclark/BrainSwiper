@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="start|top"
-                android:hint="One flashcard per line.\nSeparate hint, answer with a comma."
+                android:hint="Enter flashcards here.\nOne flashcard per line.\nSeparate hint, answer with a comma.\nDelete all flashcards to remove deck."
                 android:inputType="textMultiLine" />
 
         </LinearLayout>

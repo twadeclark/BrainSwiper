@@ -44,13 +44,22 @@ public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder
     @Override
     public DeckViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.deck_item_layout, parent, false);
-        return new DeckViewHolder(v, longClickListener, clickListener);
+        return new DeckViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull DeckViewHolder holder, int position) {
         Deck currentDeck = decks.get(position);
-        holder.textViewDeckName.setText(currentDeck.getDeckName());
+        holder.button.setText(currentDeck.getDeckName());
+
+        holder.button.setOnClickListener(v -> {
+            if (clickListener != null) {
+                if (position != RecyclerView.NO_POSITION) {
+                    clickListener.onDeckClick(currentDeck);
+                }
+            }
+        });
+
         holder.bindDeck(currentDeck);
     }
 
@@ -61,40 +70,17 @@ public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder
     }
 
     public static class DeckViewHolder extends RecyclerView.ViewHolder {
-        final TextView textViewDeckName;
-
+        androidx.appcompat.widget.AppCompatButton button;
         private Deck currentDeck;
 
         public void bindDeck(Deck deck) {
             this.currentDeck = deck;
-            // Set other views based on the deck information
         }
 
-        public DeckViewHolder(View itemView, OnDeckLongClickListener longClickListener, OnDeckClickListener clickListener) {
+        public DeckViewHolder(View itemView) {
             super(itemView);
-            textViewDeckName = itemView.findViewById(R.id.deck_name);
+            button = itemView.findViewById(R.id.deck_name);
 
-            itemView.setOnLongClickListener(v -> {
-                if (longClickListener != null) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        longClickListener.onDeckLongClick(currentDeck);
-                        return true;
-                    }
-                }
-                return false;
-            });
-
-            itemView.setOnClickListener(v -> {
-                if (clickListener != null) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        clickListener.onDeckClick(currentDeck);
-//                        return true;
-                    }
-                }
-//                return false;
-            });
         }
     }
 
