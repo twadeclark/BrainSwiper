@@ -1,7 +1,6 @@
 package com.twadeclark.brainswiper.database;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
@@ -10,7 +9,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class DeckRepository {
-    private DeckDao deckDao;
+    private final DeckDao deckDao;
     private static final Executor IO_EXECUTOR = Executors.newSingleThreadExecutor();
 
     public DeckRepository(Application application) {
@@ -19,31 +18,23 @@ public class DeckRepository {
     }
 
     public void deleteDeck(Deck deck) {
-        IO_EXECUTOR.execute(() -> {
-            deckDao.delete(deck);
-        });
+        IO_EXECUTOR.execute(() -> deckDao.delete(deck));
     }
 
     public void updateDeck(Deck deck) {
-        IO_EXECUTOR.execute(() -> {
-            deckDao.update(deck);
-        });
+        IO_EXECUTOR.execute(() -> deckDao.update(deck));
     }
 
     public void insertDeck(Deck deck) {
-        IO_EXECUTOR.execute(() -> {
-            deckDao.insert(deck);
-        });
+        IO_EXECUTOR.execute(() -> deckDao.insert(deck));
     }
 
     public LiveData<List<Deck>> getAllDecks() {
-        LiveData<List<Deck>> allDecks = deckDao.getAllDecks();
-        return allDecks;
+        return deckDao.getAllDecks();
     }
 
     public LiveData<Deck> getDeckById(int deckId) {
-        LiveData<Deck> oneDeck = deckDao.getDeckById(deckId);
-        return oneDeck;
+        return deckDao.getDeckById(deckId);
     }
 
 }

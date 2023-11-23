@@ -1,8 +1,6 @@
 package com.twadeclark.brainswiper;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,17 +9,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.twadeclark.brainswiper.database.Deck;
 import com.twadeclark.brainswiper.database.DeckViewModel;
 import com.twadeclark.brainswiper.database.DeckAdapter;
 import com.twadeclark.brainswiper.databinding.ActivityMainBinding;
 
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
-    private DeckViewModel mDeckViewModel;
     private DeckAdapter mAdapter;
 
     @Override
@@ -29,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        com.twadeclark.brainswiper.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
 
         loadDeckNames();
 
@@ -54,15 +47,10 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new DeckAdapter();
         recyclerView.setAdapter(mAdapter);
 
-        mDeckViewModel = new ViewModelProvider(this).get(DeckViewModel.class);
+        DeckViewModel mDeckViewModel = new ViewModelProvider(this).get(DeckViewModel.class);
 //        Log.d("MainActivity", "+ mDeckViewModel.toString(): " + mDeckViewModel.toString());
 
-        mDeckViewModel.getAllDecks().observe(this, new Observer<List<Deck>>() {
-            @Override
-            public void onChanged(@Nullable final List<Deck> decks) {
-                mAdapter.setDecks(decks);
-            }
-        });
+        mDeckViewModel.getAllDecks().observe(this, decks -> mAdapter.setDecks(decks));
     }
 
 }

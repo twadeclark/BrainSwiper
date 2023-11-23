@@ -10,7 +10,7 @@
         android:id="@+id/imageView"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:contentDescription="logo"
+        android:contentDescription="@string/logo"
         android:src="@drawable/brain_swiper_logo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,12 +27,11 @@
     </FrameLayout>
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:onClick="createNewDeck"
-        android:text="new deck"
+        android:text="@string/new_deck"
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"

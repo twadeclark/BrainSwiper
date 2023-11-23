@@ -1,8 +1,8 @@
 package com.twadeclark.brainswiper.database;
 
 public class Flashcard {
-    private String front;
-    private String back;
+    private final String front;
+    private final String back;
 
     public Flashcard(String front, String back) {
         this.front = front;

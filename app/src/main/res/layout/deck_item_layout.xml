@@ -15,7 +15,7 @@
         android:textSize="18sp"
         android:padding="8dp"
         android:textAllCaps="false"
-        android:text="Deck Name" />
+        android:text="@string/deck_name" />
     <!-- You can add more views here if needed -->
 
 </LinearLayout>

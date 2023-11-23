@@ -1,7 +1,6 @@
 package com.twadeclark.brainswiper.database;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -10,7 +9,7 @@ import java.util.List;
 
 public class DeckViewModel extends AndroidViewModel {
 
-    private DeckRepository mRepository;
+    private final DeckRepository mRepository;
 
     public DeckViewModel(Application application) {
         super(application);

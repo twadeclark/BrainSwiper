@@ -13,7 +13,7 @@
         android:layout_marginStart="50dp"
         android:layout_marginTop="8dp"
         android:maxLines="1"
-        android:text="title title title title title title title title title title "
+        android:text="@string/this_is_a_very_long_text_for_testing_how_things_work_when_the_text_is_long"
         android:textAlignment="textEnd"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="@+id/constraintLayoutFlipper"
@@ -56,7 +56,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
-                android:text="this is flashcard"
+                android:text="@string/flashcard_text_goes_here"
                 android:textAlignment="center"
                 android:textColor="@color/colorCardBackText"
                 android:textSize="48sp"
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Q:"
+                android:text="@string/q"
                 android:textColor="@color/colorCardBackText"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="xx/xxx"
+                android:text="@string/xx_xxx"
                 android:textColor="@color/colorCardBackText"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -109,6 +109,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:alpha="0.5"
+        android:contentDescription="@string/swap_hint_and_answer"
         android:src="@android:drawable/ic_popup_sync"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

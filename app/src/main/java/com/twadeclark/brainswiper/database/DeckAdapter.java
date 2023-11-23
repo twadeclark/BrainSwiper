@@ -1,9 +1,9 @@
 package com.twadeclark.brainswiper.database;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,17 +24,16 @@ public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder
     }
 
 
-    private OnDeckLongClickListener longClickListener;
     private OnDeckClickListener clickListener;
 
     public void setOnDeckLongClickListener(OnDeckLongClickListener listener) {
-        this.longClickListener = listener;
     }
 
     public void setOnDeckClickListener(OnDeckClickListener listener) {
         this.clickListener = listener;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setDecks(List<Deck> decks) {
         this.decks = decks;
         notifyDataSetChanged();
@@ -65,16 +64,13 @@ public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder
 
     @Override
     public int getItemCount() {
-        int retVal = decks == null ? 0 : decks.size();
-        return retVal;
+        return decks == null ? 0 : decks.size();
     }
 
     public static class DeckViewHolder extends RecyclerView.ViewHolder {
-        androidx.appcompat.widget.AppCompatButton button;
-        private Deck currentDeck;
+        final androidx.appcompat.widget.AppCompatButton button;
 
         public void bindDeck(Deck deck) {
-            this.currentDeck = deck;
         }
 
         public DeckViewHolder(View itemView) {

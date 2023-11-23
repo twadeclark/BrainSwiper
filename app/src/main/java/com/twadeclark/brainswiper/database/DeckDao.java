@@ -1,7 +1,5 @@
 package com.twadeclark.brainswiper.database;
 
-import android.os.AsyncTask;
-
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;

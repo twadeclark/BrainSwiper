@@ -26,16 +26,18 @@
                 android:id="@+id/editTextTextDeckName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter Deck Name"
-                android:inputType="textPersonName" />
+                android:hint="@string/enter_deck_name"
+                android:inputType="textPersonName"
+                android:importantForAutofill="no" />
 
             <EditText
                 android:id="@+id/editTextTextMultiLine"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="start|top"
-                android:hint="Enter flashcards here.\nOne flashcard per line.\nSeparate hint, answer with a comma.\nDelete all flashcards to remove deck."
-                android:inputType="textMultiLine" />
+                android:hint="@string/enter_flashcards_here_none_flashcard_per_line_nseparate_hint_answer_with_a_comma_ndelete_all_flashcards_to_remove_deck"
+                android:inputType="textMultiLine"
+                android:importantForAutofill="no" />
 
         </LinearLayout>
 
@@ -47,7 +49,7 @@
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="32dp"
             android:onClick="onSaveClicked"
-            android:text="save"
+            android:text="@string/save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

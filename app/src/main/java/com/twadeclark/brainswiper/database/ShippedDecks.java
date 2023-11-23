@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class ShippedDecks {
     public static ArrayList<Deck> getDecks() {
-        ArrayList<Deck> deckList = new ArrayList<Deck>();
+        ArrayList<Deck> deckList = new ArrayList<>();
 
-        for (String s[]:shippedDecks) {
+        for (String[] s :shippedDecks) {
             String deckName = s[0];
             String deckContents = s[1];
 
@@ -17,7 +17,7 @@ public class ShippedDecks {
         return deckList;
     }
 
-    private static String[][] shippedDecks = {
+    private static final String[][] shippedDecks = {
             {"State Capitals",
                     "Alabama, Montgomery\n" +
                     "Alaska, Juneau\n" +

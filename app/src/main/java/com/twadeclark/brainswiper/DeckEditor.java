@@ -1,38 +1,16 @@
 package com.twadeclark.brainswiper;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.util.Log;
 import android.view.View;
 
-import androidx.core.view.WindowCompat;
-import androidx.lifecycle.LiveData;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-import androidx.room.InvalidationTracker;
-import androidx.room.Room;
 
 import com.twadeclark.brainswiper.database.Deck;
 import com.twadeclark.brainswiper.database.DeckViewModel;
 import com.twadeclark.brainswiper.databinding.ActivityDeckEditorBinding;
 
-
-import com.twadeclark.brainswiper.database.DeckDao;
-import com.twadeclark.brainswiper.database.AppDatabase;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -64,7 +42,7 @@ public class DeckEditor extends AppCompatActivity {
 
         if (deckName.isEmpty() ) {
             Date d = new Date();
-            deckName = "Created " + d.toString();
+            deckName = "Created " + d;
         }
 
         if (currentDeckId == -1) { // new deck
