@@ -46,6 +46,7 @@ public class DeckEditor extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (getSupportActionBar() != null) { getSupportActionBar().setTitle("Edit Deck"); }
         super.onCreate(savedInstanceState);
 
         binding = ActivityDeckEditorBinding.inflate(getLayoutInflater());
