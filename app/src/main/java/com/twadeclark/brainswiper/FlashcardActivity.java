@@ -1,6 +1,7 @@
 package com.twadeclark.brainswiper;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
@@ -32,18 +33,19 @@ import java.util.List;
 public class FlashcardActivity extends AppCompatActivity {
 
     private static final String blankCardText = "(blank)";
-    private final List<Flashcard> flashcardList = new ArrayList<>();
+    private List<Flashcard> flashcardList = new ArrayList<>();
     private int currentCardIndex = 0;
     private boolean isFrontOfCardShown = true;
-    private ActivityFlashcardBinding binding;
+    private @NonNull ActivityFlashcardBinding binding;
     private GestureDetector gestureDetector;
-    private final float flipDelay = 100.0f;
-    private final float prevVel = -1.0f;
+    private float flipDelay = 100.0f;
+    private float prevVel = -1.0f;
     private int deckLength = 0;
 
     private int deckIdFromIntent;
     private String deckNameFromIntent;
     private String deckContentsFromIntent;
+    private DeckViewModel deckViewModel;
     private Deck thisDeck;
 
     @Override
@@ -52,7 +54,7 @@ public class FlashcardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityFlashcardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        DeckViewModel deckViewModel = new ViewModelProvider(this).get(DeckViewModel.class);
+        deckViewModel = new ViewModelProvider(this).get(DeckViewModel.class);
         deckIdFromIntent = getIntent().getIntExtra("deckId", -1);
 
         deckViewModel.getDeckById(deckIdFromIntent).observe(this, deck -> {
@@ -96,8 +98,12 @@ public class FlashcardActivity extends AppCompatActivity {
     private void setupGestureDetector() {
         gestureDetector = new GestureDetector(this, new GestureListener());
         ConstraintLayout constraintLayoutFlashcard = binding.constraintLayoutFlashcard;
-        constraintLayoutFlashcard.setOnTouchListener((v, event) -> {
-            return true;
+        constraintLayoutFlashcard.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                boolean retVal = gestureDetector.onTouchEvent(event);
+                return true;
+            }
         });
     }
 
@@ -163,20 +169,20 @@ public class FlashcardActivity extends AppCompatActivity {
                 .setDuration(delay)
                 .setListener(new Animator.AnimatorListener() {
                     @Override
-                    public void onAnimationStart(@NonNull Animator animation) {
+                    public void onAnimationStart(Animator animation) {
                     }
 
                     @Override
-                    public void onAnimationEnd(@NonNull Animator animation) {
+                    public void onAnimationEnd(Animator animation) {
                         cardView.setTranslationX(0); // Reset position after animation
                     }
 
                     @Override
-                    public void onAnimationCancel(@NonNull Animator animation) {
+                    public void onAnimationCancel(Animator animation) {
                     }
 
                     @Override
-                    public void onAnimationRepeat(@NonNull Animator animation) {
+                    public void onAnimationRepeat(Animator animation) {
                     }
                 })
                 .start();
@@ -191,20 +197,20 @@ public class FlashcardActivity extends AppCompatActivity {
                 .setDuration(delay)
                 .setListener(new Animator.AnimatorListener() {
                     @Override
-                    public void onAnimationStart(@NonNull Animator animation) {
+                    public void onAnimationStart(Animator animation) {
                     }
 
                     @Override
-                    public void onAnimationEnd(@NonNull Animator animation) {
+                    public void onAnimationEnd(Animator animation) {
                         cardView.setTranslationX(0); // Reset position after animation
                     }
 
                     @Override
-                    public void onAnimationCancel(@NonNull Animator animation) {
+                    public void onAnimationCancel(Animator animation) {
                     }
 
                     @Override
-                    public void onAnimationRepeat(@NonNull Animator animation) {
+                    public void onAnimationRepeat(Animator animation) {
                     }
                 })
                 .start();
@@ -270,9 +276,14 @@ public class FlashcardActivity extends AppCompatActivity {
         binding.flashcardTextView.setTextColor((ContextCompat.getColor(this, R.color.colorCardBackText)));
         isFrontOfCardShown = false;
 
+        //
+//        String cardFront = binding.checkBoxReverse.isChecked() ? flashcardList.get(currentCardIndex).getBack() : flashcardList.get(currentCardIndex).getFront();
+//        String cardBack = binding.checkBoxReverse.isChecked() ? flashcardList.get(currentCardIndex).getFront() : flashcardList.get(currentCardIndex).getBack();
+
         String statusQAText = "Q: " + cardFrontReversedIfNeeded() + "\n" + "A:";
         binding.statusQA.setText(statusQAText);
         binding.flashcardTextView.setText(cardBackReversedIfNeeded());
+
     }
 
     private void loadFlashCards() {
@@ -286,7 +297,7 @@ public class FlashcardActivity extends AppCompatActivity {
             String front = parsed[0].length() > 0 ? parsed[0] : blankCardText;
             String back = parsed.length > 1 && parsed[1].length() > 0 ? parsed[1] : blankCardText;
 
-            if (!front.equals(blankCardText) || !back.equals(blankCardText))
+            if (front != blankCardText || back != blankCardText)
             {
                 flashcardList.add(new Flashcard(front, back));
             }
