@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("deckContents", deck.getDeckContents());
             startActivity(intent);
         });
-
     }
 
     public void createNewDeck(View view) {
@@ -53,20 +52,15 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(mAdapter);
 
         DeckViewModel mDeckViewModel = new ViewModelProvider(this).get(DeckViewModel.class);
-        Log.d("MainActivity", "+ mDeckViewModel.toString(): " + mDeckViewModel.toString());
-
-        Log.d("MainActivity", "+ mDeckViewModel.getAllDecks().toString(): " + mDeckViewModel.getAllDecks().toString());
-
-        LiveData<List<Deck>> liveTemp = mDeckViewModel.getAllDecks();
-        Object o1 = liveTemp.getValue();
-        Object o2 = liveTemp.isInitialized();
-//        Log.d("MainActivity", "+ o.toString(): " + o1.toString());
-//        Log.d("MainActivity", "+ o.toString(): " + o2.toString());
-//        Log.d("MainActivity", "+ here: ");
-
-
         mDeckViewModel.getAllDecks().observe(this, decks -> mAdapter.setDecks(decks));
     }
 
+    public void showInstructions(View view) {
+        InstructionFragment instructionFragment = new InstructionFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, instructionFragment)
+                .addToBackStack(null)
+                .commit();
+    }
 }
 

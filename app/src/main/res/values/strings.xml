@@ -15,4 +15,29 @@
     <string name="logo">logo</string>
     <string name="new_deck">new deck</string>
     <string name="deck_name">Deck Name</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string name="instruction1" >
+        \nTo Open a Deck:
+        \n Tap the title on the main screen.
+        \n\nTo See Flashcard Answer:
+        \n Swipe up.
+        \n\nCorrect Answer:
+        \n Swipe right.
+        \n\nWrong Answer:
+        \n Swipe left.
+        \n\nCreate a new deck:
+        \n Click New Deck.
+        \n One flashcard per line.
+        \n Separate hint, answer with a comma.
+        \n Pro move: Copy and paste your cards right in from an email.
+        \n\nEdit a deck:
+        \n Tap deck title in flashcard view.
+        \n\nDelete a deck:
+        \n Erase all flashcard lines, then click save.
+        \n\n
+    </string>
+
 </resources>
