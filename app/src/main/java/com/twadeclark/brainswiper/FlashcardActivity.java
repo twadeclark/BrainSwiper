@@ -43,8 +43,6 @@ public class FlashcardActivity extends AppCompatActivity {
     private int deckLength = 0;
 
     private int deckIdFromIntent;
-    private String deckNameFromIntent;
-    private String deckContentsFromIntent;
     private DeckViewModel deckViewModel;
     private Deck thisDeck;
 
@@ -57,11 +55,12 @@ public class FlashcardActivity extends AppCompatActivity {
         deckViewModel = new ViewModelProvider(this).get(DeckViewModel.class);
         deckIdFromIntent = getIntent().getIntExtra("deckId", -1);
 
+        long currentTime = System.currentTimeMillis();
+        deckViewModel.updateLastAccessed(deckIdFromIntent, currentTime);
+
         deckViewModel.getDeckById(deckIdFromIntent).observe(this, deck -> {
             if (deck != null) {
                 thisDeck = deck;
-                deckNameFromIntent = thisDeck.deckName;
-                deckContentsFromIntent = thisDeck.deckContents;
 
                 setupGestureDetector();
                 loadFlashCards();
@@ -76,8 +75,8 @@ public class FlashcardActivity extends AppCompatActivity {
 
     private void setupClickableDeckName() {
         TextView tvDeckName = findViewById(R.id.titleTextView);
-        SpannableString content = new SpannableString(deckNameFromIntent);
-        content.setSpan(new UnderlineSpan(), 0, deckNameFromIntent.length(), 0);
+        SpannableString content = new SpannableString(thisDeck.getDeckName());
+        content.setSpan(new UnderlineSpan(), 0, thisDeck.getDeckName().length(), 0);
         tvDeckName.setText(content);
 
         tvDeckName.setClickable(true);
@@ -87,8 +86,8 @@ public class FlashcardActivity extends AppCompatActivity {
             Intent intent = new Intent(FlashcardActivity.this, DeckEditor.class);
 
             intent.putExtra("deckId", deckIdFromIntent);
-            intent.putExtra("deckName", deckNameFromIntent);
-            intent.putExtra("deckContents", deckContentsFromIntent);
+            intent.putExtra("deckName", thisDeck.getDeckName());
+            intent.putExtra("deckContents", thisDeck.getDeckContents());
 
             startActivity(intent);
         });
@@ -287,9 +286,9 @@ public class FlashcardActivity extends AppCompatActivity {
     }
 
     private void loadFlashCards() {
-        binding.titleTextView.setText(deckNameFromIntent);
+        binding.titleTextView.setText(thisDeck.getDeckName());
 
-        for (String line: deckContentsFromIntent.split("\n")) {
+        for (String line: thisDeck.getDeckContents().split("\n")) {
             String[] parsed = Arrays.stream(line.split(",", 2))
                     .map(String::trim)
                     .toArray(String[]::new);

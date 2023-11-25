@@ -29,6 +29,10 @@ public class DeckRepository {
         IO_EXECUTOR.execute(() -> deckDao.insert(deck));
     }
 
+    public void updateLastAccessed(long deckId, long lastAccessed) {
+        IO_EXECUTOR.execute(() -> deckDao.updateLastAccessed(deckId, lastAccessed));
+    }
+
     public LiveData<List<Deck>> getAllDecks() {
         return deckDao.getAllDecks();
     }

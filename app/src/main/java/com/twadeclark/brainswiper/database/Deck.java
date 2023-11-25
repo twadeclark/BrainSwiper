@@ -10,6 +10,7 @@ public class Deck {
     public Deck(String deckName, String deckContents) {
         this.deckName = deckName;
         this.deckContents = deckContents;
+        this.lastAccessed = System.currentTimeMillis();
     }
 
     @Ignore // so Room doesn't try to use this one
@@ -17,6 +18,7 @@ public class Deck {
         this.deckName = deckName;
         this.deckContents = deckContents;
         this.id = id;
+        this.lastAccessed = System.currentTimeMillis();
     }
 
     @PrimaryKey(autoGenerate = true)
@@ -25,6 +27,17 @@ public class Deck {
     public String deckName;
     @ColumnInfo(name = "deckContents")
     public String deckContents;
+
+    public long getLastAccessed() {
+        return lastAccessed;
+    }
+
+    public void setLastAccessed(long lastAccessed) {
+        this.lastAccessed = lastAccessed;
+    }
+
+    @ColumnInfo(name = "lastAccessed")
+    private long lastAccessed;
 
     public int getId() {
         return id;

@@ -16,6 +16,10 @@ public class DeckViewModel extends AndroidViewModel {
         mRepository = new DeckRepository(application);
     }
 
+    public void updateLastAccessed(long deckId, long lastAccessed) {
+        mRepository.updateLastAccessed(deckId, lastAccessed);
+    }
+
     public LiveData<List<Deck>> getAllDecks() {
         return mRepository.getAllDecks();
     }

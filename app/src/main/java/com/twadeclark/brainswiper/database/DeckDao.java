@@ -11,7 +11,10 @@ import java.util.List;
 
 @Dao
 public interface DeckDao {
-    @Query("SELECT * FROM decks")
+    @Query("UPDATE decks SET lastAccessed = :lastAccessed WHERE id = :deckId")
+    void updateLastAccessed(long deckId, long lastAccessed);
+
+    @Query("SELECT * FROM decks ORDER BY lastAccessed DESC")
     LiveData<List<Deck>> getAllDecks();
 
     @Query("SELECT * FROM decks WHERE id = :deckId")
