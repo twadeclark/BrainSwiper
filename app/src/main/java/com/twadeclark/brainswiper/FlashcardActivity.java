@@ -60,10 +60,9 @@ public class FlashcardActivity extends AppCompatActivity {
 
                 setupGestureDetector();
 
-                if (savedInstanceState == null) {
+                if (savedInstanceState == null && deckViewModel.getFlashcardList().size() == 0) {
                     loadFlashCards();
                 }
-
 
                 showCurrentFlashcardFront();
                 setupClickableDeckName();
@@ -261,7 +260,6 @@ public class FlashcardActivity extends AppCompatActivity {
         String countDisplayText = "" + (deckViewModel.getCurrentCardIndex() + 1) + "/" + deckViewModel.getFlashcardList().size();
         binding.countDisplay.setText(countDisplayText);
 
-        //
         binding.flashcardTextView.setText(cardFrontReversedIfNeeded());
     }
 
