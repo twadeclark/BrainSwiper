@@ -33,18 +33,17 @@ import java.util.List;
 public class FlashcardActivity extends AppCompatActivity {
 
     private static final String blankCardText = "(blank)";
-    private List<Flashcard> flashcardList = new ArrayList<>();
-    private int currentCardIndex = 0;
-    private boolean isFrontOfCardShown = true;
     private @NonNull ActivityFlashcardBinding binding;
     private GestureDetector gestureDetector;
-    private float flipDelay = 100.0f;
-    private float prevVel = -1.0f;
-    private int deckLength = 0;
+    private DeckViewModel deckViewModel;
+
 
     private int deckIdFromIntent;
-    private DeckViewModel deckViewModel;
     private Deck thisDeck;
+    private int deckLength = 0;
+//    private List<Flashcard> flashcardList = new ArrayList<>();
+//    private int currentCardIndex = 0;
+//    private boolean isFrontOfCardShown = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +62,16 @@ public class FlashcardActivity extends AppCompatActivity {
                 thisDeck = deck;
 
                 setupGestureDetector();
-                loadFlashCards();
+
+                if (savedInstanceState == null) {
+                    loadFlashCards();
+                }
+
+
                 showCurrentFlashcardFront();
                 setupClickableDeckName();
+
+                binding.titleTextView.setText(thisDeck.getDeckName());
             } else {
                 finish();
             }
@@ -118,7 +124,7 @@ public class FlashcardActivity extends AppCompatActivity {
 
             if (Math.abs(diffX) > Math.abs(diffY)) { // horizontal swipe
                 if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) { // fast enough swipe
-                    if (isFrontOfCardShown) {
+                    if (deckViewModel.getFrontOfCardShown()) {
                         // do nothing
                     } else {
                         if (diffX > 0) { // swipe right
@@ -127,16 +133,16 @@ public class FlashcardActivity extends AppCompatActivity {
                         } else { // swipe left
                             // got it wrong, add it to the end
                             Flashcard f;
-                            f = new Flashcard(flashcardList.get(currentCardIndex).getFront(),flashcardList.get(currentCardIndex).getBack());
-                            flashcardList.add(f);
+                            f = new Flashcard(deckViewModel.getFlashcardList().get(deckViewModel.getCurrentCardIndex()).getFront(),deckViewModel.getFlashcardList().get(deckViewModel.getCurrentCardIndex()).getBack());
+                            deckViewModel.getFlashcardList().add(f);
                             tossCardLeft(delay);
                         }
 
-                        currentCardIndex++;
+                        deckViewModel.incrementCurrentCardIndex();
 
-                        if (currentCardIndex >= flashcardList.size()) {
-                            currentCardIndex = 0;
-                            flashcardList.clear();
+                        if (deckViewModel.getCurrentCardIndex() >= deckViewModel.getFlashcardList().size()) {
+                            deckViewModel.setCurrentCardIndex(0); // currentCardIndex = 0;
+                            deckViewModel.getFlashcardList().clear();
                             loadFlashCards();
                         }
 
@@ -148,7 +154,7 @@ public class FlashcardActivity extends AppCompatActivity {
             } else { // vertical swipe
                 if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) { // fast enough swipe
                     if (diffY < 0) { // swipe up
-                        if (isFrontOfCardShown) {
+                        if (deckViewModel.getFrontOfCardShown()) {
                             flipCardOver (delay);
                         }
                     }
@@ -246,16 +252,16 @@ public class FlashcardActivity extends AppCompatActivity {
     private void showCurrentFlashcardFront() {
         binding.constraintLayoutInterior.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardFront)));
         binding.flashcardTextView.setTextColor((ContextCompat.getColor(this, R.color.colorCardFrontText)));
-        isFrontOfCardShown = true;
+        deckViewModel.setFrontOfCardShown(true);
 
-        if (currentCardIndex >= deckLength) {
+        if (deckViewModel.getCurrentCardIndex() >= deckLength) {
             binding.constraintLayoutFlipper.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardRed)));
         } else {
             binding.constraintLayoutFlipper.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardGreen)));
         }
 
         binding.statusQA.setText("Q:");
-        String countDisplayText = "" + (currentCardIndex + 1) + "/" + flashcardList.size();
+        String countDisplayText = "" + (deckViewModel.getCurrentCardIndex() + 1) + "/" + deckViewModel.getFlashcardList().size();
         binding.countDisplay.setText(countDisplayText);
 
         //
@@ -263,31 +269,24 @@ public class FlashcardActivity extends AppCompatActivity {
     }
 
     private String cardFrontReversedIfNeeded() {
-        return binding.checkBoxReverse.isChecked() ? flashcardList.get(currentCardIndex).getBack() : flashcardList.get(currentCardIndex).getFront();
+        return binding.checkBoxReverse.isChecked() ? deckViewModel.getFlashcardList().get(deckViewModel.getCurrentCardIndex()).getBack() : deckViewModel.getFlashcardList().get(deckViewModel.getCurrentCardIndex()).getFront();
     }
 
     private String cardBackReversedIfNeeded() {
-        return binding.checkBoxReverse.isChecked() ? flashcardList.get(currentCardIndex).getFront() : flashcardList.get(currentCardIndex).getBack();
+        return binding.checkBoxReverse.isChecked() ? deckViewModel.getFlashcardList().get(deckViewModel.getCurrentCardIndex()).getFront() : deckViewModel.getFlashcardList().get(deckViewModel.getCurrentCardIndex()).getBack();
     }
 
     private void showCurrentFlashcardBack() {
         binding.constraintLayoutInterior.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardBack)));
         binding.flashcardTextView.setTextColor((ContextCompat.getColor(this, R.color.colorCardBackText)));
-        isFrontOfCardShown = false;
-
-        //
-//        String cardFront = binding.checkBoxReverse.isChecked() ? flashcardList.get(currentCardIndex).getBack() : flashcardList.get(currentCardIndex).getFront();
-//        String cardBack = binding.checkBoxReverse.isChecked() ? flashcardList.get(currentCardIndex).getFront() : flashcardList.get(currentCardIndex).getBack();
+        deckViewModel.setFrontOfCardShown(false);
 
         String statusQAText = "Q: " + cardFrontReversedIfNeeded() + "\n" + "A:";
         binding.statusQA.setText(statusQAText);
         binding.flashcardTextView.setText(cardBackReversedIfNeeded());
-
     }
 
     private void loadFlashCards() {
-        binding.titleTextView.setText(thisDeck.getDeckName());
-
         for (String line: thisDeck.getDeckContents().split("\n")) {
             String[] parsed = Arrays.stream(line.split(",", 2))
                     .map(String::trim)
@@ -298,17 +297,17 @@ public class FlashcardActivity extends AppCompatActivity {
 
             if (front != blankCardText || back != blankCardText)
             {
-                flashcardList.add(new Flashcard(front, back));
+                deckViewModel.getFlashcardList().add(new Flashcard(front, back));
             }
         }
 
-        if (flashcardList.isEmpty()) {
+        if (deckViewModel.getFlashcardList().isEmpty()) {
             Flashcard f = new Flashcard("(empty deck)","(empty deck)");
-            flashcardList.add(f);
+            deckViewModel.getFlashcardList().add(f);
         }
 
-        deckLength = flashcardList.size();
-        Collections.shuffle(flashcardList);
+        deckLength = deckViewModel.getFlashcardList().size();
+        Collections.shuffle(deckViewModel.getFlashcardList());
     }
 
 }
