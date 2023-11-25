@@ -54,6 +54,16 @@ public class DeckViewModel extends AndroidViewModel {
     private Integer currentCardIndex = 0;
     private Boolean isFrontOfCardShown = true;
 
+    public Integer getDeckLength() {
+        return deckLength;
+    }
+
+    public void setDeckLength(Integer deckLength) {
+        this.deckLength = deckLength;
+    }
+
+    private Integer deckLength = 0;
+
     public Integer incrementCurrentCardIndex() {
         return currentCardIndex++;
     }

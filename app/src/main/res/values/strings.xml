@@ -18,8 +18,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-
-    <string name="instruction1" >
+    <string name="instruction1">
         \nTo Open a Deck:
         \n Tap the title on the main screen.
         \n\nTo See Flashcard Answer:

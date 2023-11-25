@@ -6,7 +6,9 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="8dp"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:background="@drawable/gradient_background3"
+    >
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/deck_name"

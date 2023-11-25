@@ -9,7 +9,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient_background4"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -20,15 +22,19 @@
             app:layout_constraintBottom_toTopOf="@+id/button6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/gradient_background7"
+            >
 
             <EditText
                 android:id="@+id/editTextTextDeckName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/gradient_background5"
                 android:hint="@string/enter_deck_name"
+                android:importantForAutofill="no"
                 android:inputType="textPersonName"
-                android:importantForAutofill="no" />
+                android:textSize="24sp" />
 
             <EditText
                 android:id="@+id/editTextTextMultiLine"
@@ -37,7 +43,9 @@
                 android:gravity="start|top"
                 android:hint="@string/enter_flashcards_here_none_flashcard_per_line_nseparate_hint_answer_with_a_comma_ndelete_all_flashcards_to_remove_deck"
                 android:inputType="textMultiLine"
-                android:importantForAutofill="no" />
+                android:importantForAutofill="no"
+                android:background="@drawable/gradient_background6"
+                />
 
         </LinearLayout>
 

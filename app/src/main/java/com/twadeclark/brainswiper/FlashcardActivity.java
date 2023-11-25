@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.animation.Animator;
@@ -12,6 +13,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
@@ -37,13 +39,8 @@ public class FlashcardActivity extends AppCompatActivity {
     private GestureDetector gestureDetector;
     private DeckViewModel deckViewModel;
 
-
     private int deckIdFromIntent;
     private Deck thisDeck;
-    private int deckLength = 0;
-//    private List<Flashcard> flashcardList = new ArrayList<>();
-//    private int currentCardIndex = 0;
-//    private boolean isFrontOfCardShown = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,11 +247,11 @@ public class FlashcardActivity extends AppCompatActivity {
     }
 
     private void showCurrentFlashcardFront() {
-        binding.constraintLayoutInterior.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardFront)));
+        binding.constraintLayoutInterior.setBackgroundResource(R.drawable.gradient_background8a);
         binding.flashcardTextView.setTextColor((ContextCompat.getColor(this, R.color.colorCardFrontText)));
         deckViewModel.setFrontOfCardShown(true);
 
-        if (deckViewModel.getCurrentCardIndex() >= deckLength) {
+        if (deckViewModel.getCurrentCardIndex() >= deckViewModel.getDeckLength()) {
             binding.constraintLayoutFlipper.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardRed)));
         } else {
             binding.constraintLayoutFlipper.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardGreen)));
@@ -277,7 +274,7 @@ public class FlashcardActivity extends AppCompatActivity {
     }
 
     private void showCurrentFlashcardBack() {
-        binding.constraintLayoutInterior.setBackgroundColor((ContextCompat.getColor(this, R.color.colorCardBack)));
+        binding.constraintLayoutInterior.setBackgroundResource(R.drawable.gradient_background8b);
         binding.flashcardTextView.setTextColor((ContextCompat.getColor(this, R.color.colorCardBackText)));
         deckViewModel.setFrontOfCardShown(false);
 
@@ -306,7 +303,7 @@ public class FlashcardActivity extends AppCompatActivity {
             deckViewModel.getFlashcardList().add(f);
         }
 
-        deckLength = deckViewModel.getFlashcardList().size();
+        deckViewModel.setDeckLength(deckViewModel.getFlashcardList().size());
         Collections.shuffle(deckViewModel.getFlashcardList());
     }
 

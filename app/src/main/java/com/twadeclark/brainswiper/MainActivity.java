@@ -56,11 +56,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showInstructions(View view) {
-        InstructionFragment instructionFragment = new InstructionFragment();
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, instructionFragment)
-                .addToBackStack(null)
-                .commit();
+        Intent intent = new Intent(MainActivity.this, InstructionActivity.class);
+        startActivity(intent);
+
     }
 }
 
